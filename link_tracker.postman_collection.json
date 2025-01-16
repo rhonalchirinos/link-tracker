@@ -1,0 +1,158 @@
+{
+	"info": {
+		"_postman_id": "f646cf39-3c67-444c-9cc0-487cca7f1214",
+		"name": "link tracker",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2178004"
+	},
+	"item": [
+		{
+			"name": "create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status code is 201\", () => {",
+							"    pm.expect(pm.response.code).to.eql(201)",
+							"    const body = pm.response.json()",
+							"    const links = body.link.match(/\\/l\\/([^?]+)\\?password=([^&]+)/);",
+							"    pm.environment.set('code', links[1]);",
+							"    pm.environment.set('password', links.length > 1 ? links[2] : null);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"http://google.com\",\n    \"password\": \"1234\",\n    \"validUntil\": \"12/26/2028\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/l",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"l"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "show",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"http://google.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/l/{{code}}?password={{password}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"l",
+						"{{code}}"
+					],
+					"query": [
+						{
+							"key": "password",
+							"value": "{{password}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "stats",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"http://google.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/l/{{code}}/stats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"l",
+						"{{code}}",
+						"stats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "invalidate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"http://google.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/l/{{code}}/invalidate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"l",
+						"{{code}}",
+						"invalidate"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

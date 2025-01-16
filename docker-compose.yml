@@ -1,0 +1,56 @@
+services:
+  ltracker:
+    image: node:23-alpine3.20
+    container_name: ltracker
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "npm ci && npm run start:dev"
+    networks:
+      - ltracker
+    ports:
+      - '${APP_PORT:-3000}:3000'
+    environment:
+      - NODE_ENV=development
+      - APP_PORT=3000
+      - MONGO_URI=mongodb://mongo:27017/ltracker
+      - REDIS_URI=redis://redis:6379
+    depends_on:
+      - redis
+      - mongo
+
+  mongo:
+    image: mongo:8.0.3
+    container_name: ltracker_mongo
+    volumes:
+      - ./docker/data/db:/data/db
+    ports:
+      - '${FORWARD_MONGO_DB:-27022}:27017'
+    networks:
+      - ltracker
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  redis:
+    image: 'redis:7.4.2-alpine'
+    container_name: ltracker_redis
+    networks:
+      - ltracker
+    ports:
+      - '${FORWARD_REDIS_PORT:-6344}:6379'
+    volumes:
+      - './docker/data/redis:/data'
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      retries: 3
+      timeout: 60s
+
+networks:
+  ltracker:
+    driver: bridge
