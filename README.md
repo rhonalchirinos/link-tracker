@@ -122,7 +122,7 @@ GET /l/:code/stats
 ### Invalidate a Link
 
 ```http
-Post /l/:code/invalidate
+POST /l/:code/invalidate
 ```
 
 **Parameters:**
